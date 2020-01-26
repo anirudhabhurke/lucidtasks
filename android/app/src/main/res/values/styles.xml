@@ -1,0 +1,16 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight">
+        <!-- Customize your theme here. -->
+        <item name="android:textColor">#eeeeee</item>
+        <item name="android:itemBackground">#232931</item>
+        <item name="android:navigationBarColor">#232931</item>
+
+        <item name="android:windowBackground">@color/colorBackground</item>
+
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item> 
+    </style>
+
+</resources>
