@@ -1,14 +1,5 @@
 import React, { Component } from 'react';
-import {
-      View,
-      Text,
-      StyleSheet,
-      StatusBar,
-      TouchableWithoutFeedback,
-      ToastAndroid,
-      Keyboard,
-      ScrollView
-} from 'react-native';
+import { View, Text, StyleSheet, StatusBar, TouchableWithoutFeedback, ToastAndroid, Keyboard, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import PopupMenu from './PopupMenu';
 import AddTaskComponent from './components/AddTaskComponent';
@@ -17,7 +8,6 @@ import SwipeItemComponent from './components/SwipeItemComponent';
 import Colors from '../constants/Colors';
 
 export default class HomeScreen extends Component {
-
       constructor(props) {
             super(props);
             this.state = {
@@ -26,37 +16,38 @@ export default class HomeScreen extends Component {
                   favoriteTasks: [],
                   isListEmpty: false,
                   totalTasksCount: 0,
-                  completedTasksCount: 0
+                  completedTasksCount: 0,
             };
       }
 
       static navigationOptions = {
             header: null,
-      }
+      };
 
       componentDidMount = () => {
             this.props.navigation.addListener('willFocus', () => {
                   this.getName();
                   this.getMessages();
             });
-      }
+      };
 
       getName = async () => {
             try {
                   let userName = await AsyncStorage.getItem('userName');
                   if (userName !== null) {
-                        this.setState({ userName })
+                        this.setState({ userName });
                   }
             } catch (error) {
                   // Error retrieving data
             }
-      }
+      };
 
       getMessages = async () => {
             await AsyncStorage.getAllKeys()
-                  .then(keys => {
+                  .then((keys) => {
                         AsyncStorage.multiGet(keys)
                               .then((resultingTasks) => {
+                                    resultingTasks.reverse();
                                     if (resultingTasks.length > 1) {
                                           this.setState({
                                                 tasks: resultingTasks.filter((task) => {
@@ -85,80 +76,78 @@ export default class HomeScreen extends Component {
                                                                   return task;
                                                             }
                                                       }
-                                                }).length
+                                                }).length,
                                           });
-                                    }
-                                    else {
-                                          this.setState({ isListEmpty: true })
+                                    } else {
+                                          this.setState({ isListEmpty: true });
                                     }
                               })
-                              .catch(error => {  })
+                              .catch((error) => {});
                   })
-                  .catch(error => {  })
-      }
+                  .catch((error) => {});
+      };
 
       completeTask = async (key, task, isDone, isFavorite) => {
             let taskObject = {
                   taskTitle: task,
                   isDone: !isDone,
                   isFavorite: isFavorite,
-            }
+            };
             await AsyncStorage.mergeItem(key, JSON.stringify(taskObject))
                   .then(() => {
                         this.getMessages();
                   })
-                  .catch(error => {});
-            ToastAndroid.show(!isDone ? 'TASK COMPLETED' : 'TASK INCOMPLETE', ToastAndroid.SHORT)
-      }
+                  .catch((error) => {});
+            ToastAndroid.show(!isDone ? 'TASK COMPLETED' : 'TASK INCOMPLETE', ToastAndroid.SHORT);
+      };
 
       markFavorite = async (key, task, isDone, isFavorite) => {
             let taskObject = {
                   taskTitle: task,
                   isDone: isDone,
                   isFavorite: !isFavorite,
-            }
+            };
             await AsyncStorage.mergeItem(key, JSON.stringify(taskObject))
                   .then(() => {
                         this.getMessages();
                   })
-                  .catch(error => {});
-      }
+                  .catch((error) => {});
+      };
 
       deleteTask = async (key) => {
             await AsyncStorage.removeItem(key)
                   .then(() => {
                         this.getMessages();
                   })
-                  .catch(error => {  })
-      }
+                  .catch((error) => {});
+      };
 
       onPopupEvent = (eventName, index) => {
             if (eventName !== 'itemSelected') return;
-            if (index === 0) this.props.navigation.navigate("Settings");
-            if (index === 1) this.props.navigation.navigate("About");
+            if (index === 0) this.props.navigation.navigate('Settings');
+            if (index === 1) this.props.navigation.navigate('About');
       };
 
       sliceTask = (fullTask) => {
             let words = fullTask.split(' ');
-            let string = (words.slice(0, 10)).join(' ')
-            if (words.length < 10)
-                  return string;
-            return `${string} ...`
-      }
+            let string = words.slice(0, 10).join(' ');
+            if (words.length < 10) return string;
+            return `${string} ...`;
+      };
 
       renderTaskItem = (item) => {
             return (
                   <SwipeItemComponent
-                        key = {item[0]}
-                        item = {item}
-                        completeTask = {this.completeTask}
-                        markFavorite = {this.markFavorite}
-                        deleteTask = {this.deleteTask}
-                        navigate = {this.props.navigation.navigate}
-                        sliceTask = {this.sliceTask}
-                  ></SwipeItemComponent>
-            )
-      }
+                        key={item[0]}
+                        item={item}
+                        completeTask={this.completeTask}
+                        markFavorite={this.markFavorite}
+                        deleteTask={this.deleteTask}
+                        navigate={this.props.navigation.navigate}
+                        sliceTask={this.sliceTask}
+                  />
+            );
+      };
 
       renderTasks = () => {
             if (this.state.isListEmpty)
@@ -167,28 +156,24 @@ export default class HomeScreen extends Component {
                               <Text style={styles.emptyHead}>A fresh start</Text>
                               <Text style={styles.emptyText}>Ready to do great things!</Text>
                         </View>
-                  )
+                  );
             return (
-                  <ScrollView style={{flex: 1}}>
+                  <ScrollView style={{ flex: 1 }}>
                         <View style={styles.tasksView}>
                               {this.state.favoriteTasks.length > 0 ? <Text style={styles.taskHead}>Favorites</Text> : null}
-                              {
-                                    this.state.favoriteTasks.map((item) => {
-                                          return this.renderTaskItem(item)
-                                    })
-                              }
+                              {this.state.favoriteTasks.map((item) => {
+                                    return this.renderTaskItem(item);
+                              })}
                         </View>
                         <View style={styles.tasksView}>
                               {this.state.tasks.length > 0 ? <Text style={styles.taskHead}>All Tasks</Text> : null}
-                              {
-                                    this.state.tasks.map((item) => {
-                                          return this.renderTaskItem(item)
-                                    })
-                              }
+                              {this.state.tasks.map((item) => {
+                                    return this.renderTaskItem(item);
+                              })}
                         </View>
                   </ScrollView>
-            )
-      }
+            );
+      };
 
       render() {
             return (
@@ -202,9 +187,7 @@ export default class HomeScreen extends Component {
                                           totalTasksCount={this.state.totalTasksCount}
                                           isListEmpty={this.state.isListEmpty}
                                     />
-                                          {
-                                                this.renderTasks()
-                                          }
+                                    {this.renderTasks()}
                                     <View style={styles.popup}>
                                           <PopupMenu actions={['Settings', 'About']} onPress={this.onPopupEvent} />
                                     </View>
@@ -212,14 +195,14 @@ export default class HomeScreen extends Component {
                               </View>
                         </TouchableWithoutFeedback>
                   </View>
-            )
+            );
       }
 }
 
 const styles = StyleSheet.create({
       container: {
             flexGrow: 1,
-            backgroundColor: Colors.backgroundColor
+            backgroundColor: Colors.backgroundColor,
       },
       tasksView: {
             paddingHorizontal: 5,
@@ -229,7 +212,7 @@ const styles = StyleSheet.create({
             color: Colors.primaryColor,
             fontFamily: 'OpenSans-Regular',
             textAlign: 'center',
-            marginTop: 7
+            marginTop: 7,
       },
       popup: {
             position: 'absolute',
@@ -245,12 +228,11 @@ const styles = StyleSheet.create({
       emptyHead: {
             fontFamily: 'KaushanScript-Regular',
             fontSize: 30,
-            color: Colors.textColor
+            color: Colors.textColor,
       },
       emptyText: {
             fontFamily: 'KaushanScript-Regular',
             fontSize: 20,
-            color: Colors.textColor
+            color: Colors.textColor,
       },
-
 });
