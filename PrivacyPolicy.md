@@ -1,6 +1,6 @@
 # Privacy Policy for Lucid Tasks
 
-## Effective Date: July 4, 2023
+Effective Date: July 4, 2023
 
 This privacy policy describes how Lucid Tasks (hereafter referred to as "we", "us" or "our") collects, protects, and uses the personal information you ("User", "you" or "your") may provide on the Lucid Tasks mobile application.
 
